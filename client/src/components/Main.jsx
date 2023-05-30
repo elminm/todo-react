@@ -9,10 +9,9 @@ export default function Main() {
     dispatch(deleteTodo(id));
   };
   const handleChecked = (id) => {
-    const findObj = todos.find((q) => q.id == id);
-    console.log(findObj);
-    findObj.completed = !findObj.completed;
-    dispatch(handleCheckTodo(id, findObj));
+    const findObj = todos.find((q) => q.id === id);
+    const updatedObj = { ...findObj, completed: !findObj.completed };
+    dispatch(handleCheckTodo({ id, updatedObj }));
   };
   const filteredTodos =
     activeTab === "completed"

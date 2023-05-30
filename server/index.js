@@ -24,14 +24,10 @@ app.post("/todos/api", (req, res) => {
 });
 
 app.put("/todos/api/:id", function (req, res) {
-  const todoIdx = todos.findIndex((todo) => todo.id == req.body.id);
-  if (todoIdx != -1) {
-    const oldTodo = todos[todoIdx];
-    todos[todoIdx] = { ...oldTodo, ...req.body };
-    res.json(todos[todoIdx]);
-  } else {
-    res.status(404).json();
-  }
+  const todoIdx = todos.findIndex((q) => q.id == req.body.id);
+  const oldTodo = todos[todoIdx];
+  todos[todoIdx] = { ...oldTodo, ...req.body };
+  res.json(todos);
 });
 app.delete("/todos/api/:id", (req, res) => {
   if (req.params.id == 0) {

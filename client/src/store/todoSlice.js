@@ -20,8 +20,11 @@ export const deleteTodo = createAsyncThunk("delete/todo", async (id) => {
 });
 export const handleCheckTodo = createAsyncThunk(
   "handleCheck/todo",
-  async (id, obj) => {
-    const res = await axios.put("http://localhost:8000/todos/api/" + id, obj);
+  async (payload) => {
+    const res = await axios.put(
+      "http://localhost:8000/todos/api/" + payload.id,
+      payload.updatedObj
+    );
     return res.data;
   }
 );
