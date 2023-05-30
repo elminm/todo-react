@@ -1,15 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
-import { handleCheckTodo, removeTodoAction } from "../store/todoSlice";
+import { deleteTodo, handleCheckTodo } from "../store/todoSlice";
 
 export default function Main() {
   const dispatch = useDispatch();
   const { todos, activeTab } = useSelector((state) => state.todoReducer);
 
   const removeTodo = (id) => {
-    dispatch(removeTodoAction(id));
+    dispatch(deleteTodo(id));
   };
   const handleChecked = (id) => {
-    dispatch(handleCheckTodo(id));
+    const findObj = todos.find((q) => q.id == id);
+    console.log(findObj);
+    findObj.completed = !findObj.completed;
+    dispatch(handleCheckTodo(id, findObj));
   };
   const filteredTodos =
     activeTab === "completed"
@@ -17,7 +20,6 @@ export default function Main() {
       : activeTab === "active"
       ? todos.filter((q) => !q.completed)
       : todos;
-
   return (
     <section className="main">
       <input className="toggle-all" type="checkbox" />

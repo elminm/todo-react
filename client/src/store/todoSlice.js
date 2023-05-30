@@ -1,32 +1,41 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 const initialState = {
   todos: [],
+  loading: false,
   activeTab: "all",
 };
+export const getAllData = createAsyncThunk("fetch/todos", async () => {
+  const res = await axios.get("http://localhost:8000/todos/api");
+  return res.data;
+});
+export const postTodo = createAsyncThunk("post/todos", async (obj) => {
+  const res = await axios.post("http://localhost:8000/todos/api", obj);
+  return res.data;
+});
+export const deleteTodo = createAsyncThunk("delete/todo", async (id) => {
+  const res = await axios.delete("http://localhost:8000/todos/api/" + id);
+  console.log(res.data);
+  return res.data;
+});
+export const handleCheckTodo = createAsyncThunk(
+  "handleCheck/todo",
+  async (id, obj) => {
+    const res = await axios.put("http://localhost:8000/todos/api/" + id, obj);
+    return res.data;
+  }
+);
+export const clearCompletedTodoAction = createAsyncThunk(
+  "deleteCompleted/todos",
+  async () => {
+    const res = await axios.delete("http://localhost:8000/todos/api/0");
+    return res.data;
+  }
+);
 const todoSlice = createSlice({
   name: "todos",
   initialState,
   reducers: {
-    addTodo: (state, { payload }) => {
-      const maxId = state.todos.reduce(
-        (acc, todo) => (todo.id > acc ? todo.id : todo.id),
-        0
-      );
-      state.todos = [
-        ...state.todos,
-        { id: maxId + 1, todo: payload, completed: false },
-      ];
-    },
-    handleCheckTodo: (state, { payload }) => {
-      const findObj = state.todos.find((q) => q.id == payload);
-      findObj.completed = !findObj.completed;
-    },
-    removeTodoAction: (state, { payload }) => {
-      state.todos = [...state.todos.filter((q) => q.id != payload)];
-    },
-    clearCompletedTodoAction: (state) => {
-      state.todos = [...state.todos.filter((q) => !q.completed)];
-    },
     getTabAction: (state, { payload }) => {
       if (payload.toLowerCase() === "all") {
         return { ...state, activeTab: "all" };
@@ -38,14 +47,35 @@ const todoSlice = createSlice({
       return state;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(getAllData.pending, (state) => {
+      state.loading = true;
+      state.todos = [];
+    });
+    builder.addCase(getAllData.fulfilled, (state, { payload }) => {
+      state.todos = payload;
+      state.loading = false;
+    });
+    builder.addCase(postTodo.fulfilled, (state, { payload }) => {
+      state.todos = payload;
+      state.loading = false;
+    });
+    builder.addCase(handleCheckTodo.fulfilled, (state, { payload }) => {
+      state.todos = payload;
+      state.loading = false;
+    });
+    builder.addCase(deleteTodo.fulfilled, (state, { payload }) => {
+      state.todos = payload;
+      state.loading = false;
+    });
+    builder.addCase(
+      clearCompletedTodoAction.fulfilled,
+      (state, { payload }) => {
+        state.todos = payload;
+        state.loading = false;
+      }
+    );
+  },
 });
-
 export default todoSlice.reducer;
-
-export const {
-  addTodo,
-  handleCheckTodo,
-  removeTodoAction,
-  clearCompletedTodoAction,
-  getTabAction,
-} = todoSlice.actions;
+export const { getTabAction } = todoSlice.actions;

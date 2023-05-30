@@ -22,7 +22,6 @@ export default function TodoFooter() {
         {tabs.map((tab, key) => (
           <li key={key}>
             <a
-              href="#/"
               className={activeTab === tab.toLowerCase() ? "selected" : ""}
               onClick={() => getTab(tab)}
             >
