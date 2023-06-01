@@ -15,7 +15,6 @@ export const postTodo = createAsyncThunk("post/todos", async (obj) => {
 });
 export const deleteTodo = createAsyncThunk("delete/todo", async (id) => {
   const res = await axios.delete("http://localhost:8000/todos/api/" + id);
-  console.log(res.data);
   return res.data;
 });
 export const handleCheckTodo = createAsyncThunk(
@@ -28,11 +27,12 @@ export const handleCheckTodo = createAsyncThunk(
     return res.data;
   }
 );
-export const clearCompletedTodoAction = createAsyncThunk(
+export const deleteCompletedTodoAction = createAsyncThunk(
   "deleteCompleted/todos",
-  async () => {
-    const res = await axios.delete("http://localhost:8000/todos/api/0");
-    return res.data;
+  async (completedTodos, { dispatch }) => {
+    await axios
+      .put("http://localhost:8000/todos/api/delete/completed", completedTodos)
+      .then(() => dispatch(getAllData()));
   }
 );
 const todoSlice = createSlice({
@@ -53,32 +53,44 @@ const todoSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getAllData.pending, (state) => {
       state.loading = true;
-      state.todos = [];
     });
     builder.addCase(getAllData.fulfilled, (state, { payload }) => {
       state.todos = payload;
       state.loading = false;
     });
     builder.addCase(postTodo.fulfilled, (state, { payload }) => {
-      state.todos = payload;
+      state.todos = [...state.todos, payload];
       state.loading = false;
     });
     builder.addCase(handleCheckTodo.fulfilled, (state, { payload }) => {
-      state.todos = payload;
+      state.todos = [
+        ...state.todos.map((item) => {
+          if (item._id == payload._id) {
+            return payload;
+          }
+          return item;
+        }),
+      ];
       state.loading = false;
     });
-    builder.addCase(deleteTodo.fulfilled, (state, { payload }) => {
-      state.todos = payload;
+    builder.addCase(deleteTodo.fulfilled, (state, action) => {
+      console.log("ACTION", action);
+      state.todos = [...state.todos.filter((q) => q._id !== action.meta.arg)];
       state.loading = false;
     });
-    builder.addCase(
-      clearCompletedTodoAction.fulfilled,
-      (state, { payload }) => {
-        state.todos = payload;
-        state.loading = false;
-      }
-    );
   },
 });
 export default todoSlice.reducer;
 export const { getTabAction } = todoSlice.actions;
+
+//second way update IMPORTANT!!!
+// export const handleCheckTodo = createAsyncThunk(
+//   "handleCheck/todo",
+//   async (payload, { dispatch }) => {
+//     await axios.put(
+//       "http://localhost:8000/todos/api/" + payload.id,
+//       payload.updatedObj
+//     )
+//     dispatch(getAllData());
+//   }
+// );

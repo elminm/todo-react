@@ -1,40 +1,82 @@
+const { default: mongoose } = require("mongoose");
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const { Schema } = mongoose;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-let todos = [];
+mongoose.connect(
+  "mongodb+srv://Elminm:jNEw1D2pOtGgGwBg@cluster0.kuxordu.mongodb.net/usersdb"
+);
+let todosSchema = new Schema({
+  todo: String,
+  completed: Boolean,
+  date: { type: Date, default: Date.now },
+});
+let Todos = mongoose.model("Todos", todosSchema);
+
 app.get("/todos/api", (req, res) => {
-  res.json(todos);
+  Todos.find()
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
 });
 app.get("/todos/api/:id", (req, res) => {
-  const findObj = todos.find((q) => q.id == req.params.id);
-  if (findObj) {
-    res.json(findObj);
-  } else
-    res.json({
-      msg: "Todo Not Found",
+  Todos.findById(req.params.id)
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((err) => {
+      res.json(err);
     });
 });
 
 app.post("/todos/api", (req, res) => {
-  todos.push(req.body);
-  res.json(todos);
+  let todo = new Todos({
+    todo: req.body.todo,
+    completed: req.body.completed,
+  });
+  todo.save();
+  res.json(todo);
 });
 
 app.put("/todos/api/:id", function (req, res) {
-  const todoIdx = todos.findIndex((q) => q.id == req.body.id);
-  const oldTodo = todos[todoIdx];
-  todos[todoIdx] = { ...oldTodo, ...req.body };
-  res.json(todos);
+  let id = req.params.id;
+  let newTodo = {
+    todo: req.body.todo,
+    completed: req.body.completed,
+    date: new Date(),
+  };
+  Todos.findByIdAndUpdate(id, newTodo, { new: true })
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((err) => res.json(err));
 });
 app.delete("/todos/api/:id", (req, res) => {
-  if (req.params.id == 0) {
-    todos = todos.filter((q) => !q.completed);
+  Todos.findByIdAndRemove(req.params.id)
+    .then((data) => {
+      res.json({
+        msg: "Deleted Succesfully",
+      });
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
+});
+app.put("/todos/api/delete/completed", async (req, res) => {
+  console.log(req.body);
+  try {
+    const idsToDelete = req.body.map((item) => item._id);
+    await Todos.deleteMany({ _id: { $in: idsToDelete } });
+    res.json({ msg: "Deleted Successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  todos = todos.filter((q) => q.id != req.params.id);
-  res.json(todos);
 });
 
 app.listen(8000, () => {
