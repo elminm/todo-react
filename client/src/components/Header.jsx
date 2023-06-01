@@ -15,7 +15,7 @@ export default function Header() {
   };
   return (
     <>
-      {/* {loading && <h1>LOADING</h1>} */}(
+      {/* {loading && <h1>LOADING</h1>} */}
       <header className="header">
         <h1>todos</h1>
         <form onSubmit={handleSubmit}>
