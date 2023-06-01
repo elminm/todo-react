@@ -8,7 +8,9 @@ export default function TodoFooter() {
   const unCompletedTodo = todos?.filter((q) => !q?.completed);
   const clearCompletedTodo = () => {
     const completedTodos = todos.filter((q) => q?.completed);
-    dispatch(deleteCompletedTodoAction(completedTodos));
+    completedTodos.length > 0
+      ? dispatch(deleteCompletedTodoAction(completedTodos))
+      : alert("you must complete at least one todo ; )");
   };
   const getTab = (tab) => {
     dispatch(getTabAction(tab));

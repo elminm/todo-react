@@ -65,12 +65,18 @@ const todoSlice = createSlice({
     builder.addCase(postTodo.pending, (state) => {
       state.loading = true;
     });
+    builder.addCase(postTodo.rejected, (state) => {
+      state.loading = false;
+    });
     builder.addCase(postTodo.fulfilled, (state, { payload }) => {
       state.todos = [...state.todos, payload];
       state.loading = false;
     });
     builder.addCase(handleCheckTodo.pending, (state) => {
       state.loading = true;
+    });
+    builder.addCase(handleCheckTodo.rejected, (state) => {
+      state.loading = false;
     });
     builder.addCase(handleCheckTodo.fulfilled, (state, { payload }) => {
       state.todos = [
@@ -85,6 +91,9 @@ const todoSlice = createSlice({
     });
     builder.addCase(deleteTodo.pending, (state) => {
       state.loading = true;
+    });
+    builder.addCase(deleteTodo.rejected, (state) => {
+      state.loading = false;
     });
     builder.addCase(deleteTodo.fulfilled, (state, action) => {
       state.todos = [...state.todos.filter((q) => q._id !== action.meta.arg)];
