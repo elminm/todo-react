@@ -15,7 +15,6 @@ let todosSchema = new Schema({
   date: { type: Date, default: Date.now },
 });
 let Todos = mongoose.model("Todos", todosSchema);
-
 app.get("/todos/api", (req, res) => {
   Todos.find()
     .then((data) => {
@@ -34,7 +33,6 @@ app.get("/todos/api/:id", (req, res) => {
       res.json(err);
     });
 });
-
 app.post("/todos/api", (req, res) => {
   let todo = new Todos({
     todo: req.body.todo,
@@ -43,7 +41,6 @@ app.post("/todos/api", (req, res) => {
   todo.save();
   res.json(todo);
 });
-
 app.put("/todos/api/:id", function (req, res) {
   let id = req.params.id;
   let newTodo = {
@@ -69,7 +66,6 @@ app.delete("/todos/api/:id", (req, res) => {
     });
 });
 app.put("/todos/api/delete/completed", async (req, res) => {
-  console.log(req.body);
   try {
     const idsToDelete = req.body.map((item) => item._id);
     await Todos.deleteMany({ _id: { $in: idsToDelete } });
@@ -78,7 +74,6 @@ app.put("/todos/api/delete/completed", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 app.listen(8000, () => {
   console.log("listening port 8000");
 });

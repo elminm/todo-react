@@ -1,3 +1,4 @@
+//IMPORTANT THING BELOW !!
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 const initialState = {
@@ -58,9 +59,18 @@ const todoSlice = createSlice({
       state.todos = payload;
       state.loading = false;
     });
+    builder.addCase(getAllData.rejected, (state) => {
+      state.loading = false;
+    });
+    builder.addCase(postTodo.pending, (state) => {
+      state.loading = true;
+    });
     builder.addCase(postTodo.fulfilled, (state, { payload }) => {
       state.todos = [...state.todos, payload];
       state.loading = false;
+    });
+    builder.addCase(handleCheckTodo.pending, (state) => {
+      state.loading = true;
     });
     builder.addCase(handleCheckTodo.fulfilled, (state, { payload }) => {
       state.todos = [
@@ -73,8 +83,10 @@ const todoSlice = createSlice({
       ];
       state.loading = false;
     });
+    builder.addCase(deleteTodo.pending, (state) => {
+      state.loading = true;
+    });
     builder.addCase(deleteTodo.fulfilled, (state, action) => {
-      console.log("ACTION", action);
       state.todos = [...state.todos.filter((q) => q._id !== action.meta.arg)];
       state.loading = false;
     });
@@ -83,7 +95,7 @@ const todoSlice = createSlice({
 export default todoSlice.reducer;
 export const { getTabAction } = todoSlice.actions;
 
-//second way update IMPORTANT!!!
+//second way update IMPORTANT !!
 // export const handleCheckTodo = createAsyncThunk(
 //   "handleCheck/todo",
 //   async (payload, { dispatch }) => {
@@ -94,3 +106,4 @@ export const { getTabAction } = todoSlice.actions;
 //     dispatch(getAllData());
 //   }
 // );
+// UP then REMEMBER !!

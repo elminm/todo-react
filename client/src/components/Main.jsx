@@ -21,32 +21,39 @@ export default function Main() {
       ? todos.filter((q) => !q.completed)
       : todos;
   return (
-    <section className="main">
-      <input className="toggle-all" type="checkbox" />
-      <label htmlFor="toggle-all">Mark all as complete</label>
-      <ul className="todo-list">
-        {filteredTodos.length > 0 ? (
-          filteredTodos.map((item) => (
-            <li className={item.completed ? "completed" : ""} key={item._id}>
-              <div className="view">
-                <input
-                  className="toggle"
-                  type="checkbox"
-                  checked={item.completed}
-                  onChange={() => handleChecked(item._id)}
-                />
-                <label>{item.todo}</label>
-                <button
-                  className="destroy"
-                  onClick={() => removeTodo(item._id)}
-                ></button>
-              </div>
-            </li>
-          ))
-        ) : (
-          <li style={{ padding: "30px" }}>Empty</li>
-        )}
-      </ul>
-    </section>
+    <>
+      {todos.length > 0 && (
+        <section className="main">
+          <input className="toggle-all" type="checkbox" />
+          <label htmlFor="toggle-all">Mark all as complete</label>
+          <ul className="todo-list">
+            {filteredTodos.length > 0 ? (
+              filteredTodos.map((item) => (
+                <li
+                  className={item.completed ? "completed" : ""}
+                  key={item._id}
+                >
+                  <div className="view">
+                    <input
+                      className="toggle"
+                      type="checkbox"
+                      checked={item.completed}
+                      onChange={() => handleChecked(item._id)}
+                    />
+                    <label>{item.todo}</label>
+                    <button
+                      className="destroy"
+                      onClick={() => removeTodo(item._id)}
+                    ></button>
+                  </div>
+                </li>
+              ))
+            ) : (
+              <li style={{ padding: "30px" }}>Empty</li>
+            )}
+          </ul>
+        </section>
+      )}
+    </>
   );
 }

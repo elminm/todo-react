@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteCompletedTodoAction, getTabAction } from "../store/todoSlice";
-
 export default function TodoFooter() {
   const dispatch = useDispatch();
   const [tabs] = useState(["All", "Active", "Completed"]);
