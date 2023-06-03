@@ -20,14 +20,19 @@ export default function Main() {
       : activeTab === "active"
       ? todos.filter((q) => !q.completed)
       : todos;
+
+  const toggleTodos = () => {};
+
   return (
     <>
-      {todos.length > 0 && (
+      {todos.length > 0 ? (
         <section className="main">
           <input className="toggle-all" type="checkbox" />
-          <label htmlFor="toggle-all">Mark all as complete</label>
+          <label htmlFor="toggle-all" onClick={toggleTodos}>
+            Mark all as complete
+          </label>
           <ul className="todo-list">
-            {filteredTodos.length > 0 ? (
+            {filteredTodos.length > 0 &&
               filteredTodos.map((item) => (
                 <li
                   className={item.completed ? "completed" : ""}
@@ -47,12 +52,13 @@ export default function Main() {
                     ></button>
                   </div>
                 </li>
-              ))
-            ) : (
-              <li style={{ padding: "30px" }}>Empty</li>
-            )}
+              ))}
           </ul>
         </section>
+      ) : (
+        <p style={{ padding: "0 30px", opacity: "0.4", fontSize: "20px" }}>
+          Empty...
+        </p>
       )}
     </>
   );

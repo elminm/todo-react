@@ -4,6 +4,7 @@ import axios from "axios";
 const initialState = {
   todos: [],
   loading: false,
+  errors: undefined,
   activeTab: "all",
 };
 export const getAllData = createAsyncThunk("fetch/todos", async () => {
@@ -14,6 +15,7 @@ export const postTodo = createAsyncThunk("post/todos", async (obj) => {
   const res = await axios.post("http://localhost:8000/todos/api", obj);
   return res.data;
 });
+
 export const deleteTodo = createAsyncThunk("delete/todo", async (id) => {
   const res = await axios.delete("http://localhost:8000/todos/api/" + id);
   return res.data;
@@ -65,8 +67,9 @@ const todoSlice = createSlice({
     builder.addCase(postTodo.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(postTodo.rejected, (state) => {
+    builder.addCase(postTodo.rejected, (state, { payload }) => {
       state.loading = false;
+      state.errors = payload;
     });
     builder.addCase(postTodo.fulfilled, (state, { payload }) => {
       state.todos = [...state.todos, payload];
