@@ -56,11 +56,11 @@ const todoController = {
         res.status(500).json(err);
       });
   },
-  deleteMany: (req, res) => {
+  deleteMany: async (req, res) => {
     try {
       const idsToDelete = req.body.map((item) => item._id);
-      Todos.deleteMany({ _id: { $in: idsToDelete } });
-      res.json({ msg: "Deleted Successfully" });
+      await Todos.deleteMany({ _id: { $in: idsToDelete } });
+      res.json({ msg: "Başarıyla Silindi" });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
