@@ -18,10 +18,8 @@ export default function Main() {
     activeTab === "completed"
       ? todos.filter((q) => q.completed)
       : activeTab === "active"
-      ? todos.filter((q) => !q.completed)
-      : todos;
-
-  const toggleTodos = () => {};
+        ? todos.filter((q) => !q.completed)
+        : todos;
 
   return (
     <>
